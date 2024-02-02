@@ -1,0 +1,23 @@
+{
+  "name": "bank_hardhat",
+  "version": "1.0.0",
+  "description": "Blockchain Bank Project using Hardhat as a development environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aldomunaretto/bank_hardhat.git"
+  },
+  "author": "Aldo Munaretto",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/aldomunaretto/bank_hardhat/issues"
+  },
+  "homepage": "https://github.com/aldomunaretto/bank_hardhat#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4"
+  }
+}
