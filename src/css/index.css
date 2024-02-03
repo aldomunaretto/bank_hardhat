@@ -1,0 +1,79 @@
+html {
+    height: 100%;
+    background-image: url(https://keepcoding.io/wp-content/uploads/2021/12/Home-cabecera-min-1.jpg);
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    text-align: center;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+}
+
+section {
+    padding: 32px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    max-width: 600px;
+    margin: auto;
+}
+
+img {
+    margin: 16px auto 0 auto;
+}
+
+h1 {
+    font-weight: 900;
+    margin: 16px auto 24px auto;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-weight: 900;
+    text-align: center;
+    margin: 8px 16px;
+}
+
+p {
+    font-size: 14px;
+    margin: 8px 4px;
+}
+
+button {
+    width: 300px;
+    margin: 12px auto;
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    border: none;
+    padding: 0 56px;
+    height: 45px;
+    line-height: 45px;
+    background-color: #0070f3;
+    color: white;
+    font-weight: 400;
+    font-size: 16px;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+    background-image: linear-gradient(120deg, #f0a11c 32%, #d55f1c 100%);
+    border-radius: 26px 26px 26px 26px;
+    :hover {
+        background: rgba(0, 118, 255, 0.9);
+        box-shadow: 0 6px 20px rgb(0 118 255 / 23%);
+    }
+}
+
+input {
+    padding: 8px;
+    margin: 12px auto;
+    border: none;
+    transition: width 200ms;
+    color: black;
+    border-bottom: 1px solid #eee;
+    font-weight: 800;
+    font-size: 32px;
+    width: 300px;
+}
