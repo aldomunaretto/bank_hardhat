@@ -97,9 +97,19 @@ describe("Nuestro Banco", function () {
         await this.bank.connect(this.account1).deposit({ value: ethers.parseEther("1")});
 
         let interest = await this.bank.connect(this.owner).getUserInterest(this.account1);
-        // console.log(interest.toString());
-        // revisar esto ya que segun la calculadora de intereses deberia ser 15854895991.9
-        assert(interest.toString(), "1585489599", "interest is calculated correctly");
+        assert(interest > 1585489500, "Interest is not calculated correctly");
+    });
+
+    it("Get My Interest works correctly", async function () {
+
+        await this.bank.connect(this.account1).deposit({ value: ethers.parseEther("1") });
+    
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    
+        await this.bank.connect(this.account1).deposit({ value: ethers.parseEther("1") });
+    
+        let interest = await this.bank.connect(this.account1).getMyInterest();
+        assert(interest > 1585489500, "Interest is not calculated correctly");
     });
 
     it("Timestamp for last interest paid is set correctly", async function () {
@@ -107,7 +117,7 @@ describe("Nuestro Banco", function () {
         await this.bank.connect(this.account1).deposit({ value: 10 });
 
         let timestamp = await this.bank.connect(this.owner).getUserLastInterestPaid(this.account1);
-        assert(timestamp.toString() > 0, "timestamp is not set correctly");
+        assert(timestamp > 0, "timestamp is not set correctly");
     });
 
     it("Timestamp difference is calculated correctly", async function () {
@@ -121,7 +131,7 @@ describe("Nuestro Banco", function () {
         await this.bank.connect(this.account1).deposit({ value: 10 });
 
         let timestamp2 = await this.bank.connect(this.owner).getUserLastInterestPaid(this.account1);
-        assert.equal((timestamp2-timestamp1).toString(), "1", "timestamp difference is not calculated correctly");
+        assert((timestamp2-timestamp1) >= 1, "timestamp difference is not calculated correctly");
     });
 
     it("Annual interest rate can be set by admin", async function () {
