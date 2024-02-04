@@ -23,7 +23,9 @@ function Actions(props) {
 
         if (props.refresh) {
             props.refresh(wallet);
-        }
+            setDepositVal("0");
+            setWithdrawVal("0");
+        }  
     }
 
     async function withdraw(e) {
@@ -61,17 +63,17 @@ function Actions(props) {
     };
 
     return (
-        <div style={actionsStyle}>
+        <div className="numbers" style={actionsStyle}>
 
-            <div style={actionStyle}>
-                <h2>Deposit Process</h2>
-                <input type="number" name="depositVal" value={depositVal}
+            <div className="hello" style={actionStyle}>
+                <h2><span>Deposit</span> Process</h2>
+                <input id="number" type="number" name="depositVal" value={depositVal}
                     onChange={e => setDepositVal(e.target.value)} />
                 <button onClick={deposit}> Deposit </button>
             </div>
 
-            <div style={actionStyle}>
-                <h2>Withdraw Process</h2>
+            <div className="hello" style={actionStyle}>
+                <h2><span>Withdraw</span> Process</h2>
                 <input type="number" name="withdrawVal" value={withdrawVal}
                     onChange={e => setWithdrawVal(e.target.value)} />
                 <button onClick={withdraw}> Withdraw </button>
@@ -89,6 +91,7 @@ function Main(props) {
     const [wallet, setWallet] = React.useState("");
     const [ethBalance, setEthBalance] = React.useState("");
     const [bankBalance, setBankBalance] = React.useState("");
+    const [interestReceived, setinterestReceived] = React.useState("");
 
     async function refreshBalances(wallet) {
 
@@ -99,8 +102,14 @@ function Main(props) {
 
         // Get Your bank balance
 
-        const bankBalanceVal = await BANK.methods.getBalance().call({ from: wallet });
+        const bankBalanceVal = await BANK.methods.getMyBalance().call({ from: wallet });
         setBankBalance(web3.utils.fromWei(bankBalanceVal, 'ether'));
+
+        // Get Your bank balance
+
+        const interestReceivedVal = await BANK.methods.getMyInterest().call({ from: wallet });
+        setinterestReceived(web3.utils.fromWei(interestReceivedVal, 'ether'));
+        console.log(interestReceivedVal);
     }
 
     async function connectToMetamask(e) {
@@ -131,8 +140,8 @@ function Main(props) {
     return (
         <div>
 
-            <img src="https://keepcoding.io/wp-content/uploads/2022/01/cropped-logo-keepcoding-Tech-School.png"></img>
-            <h1>Welcome to Keepcoding Bank</h1>
+            <img src="./assets/logo.png" width="15%"></img>
+            <h1>Welcome to Bit Bank</h1>
 
             {
                 wallet ?
@@ -141,6 +150,7 @@ function Main(props) {
                         <p><b>Wallet</b> = {wallet}</p>
                         <p><b>Wallet Balance</b> = {ethBalance} ETH</p>
                         <p><b>Bank Balance</b> = {bankBalance} ETH</p>
+                        <p><b>Interest Earned</b> = {interestReceived} ETH</p>
                         <Actions wallet={wallet} refresh={refreshBalances} />
                     </section>
 

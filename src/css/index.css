@@ -1,20 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600;700&display=swap');
+
 html {
     height: 100%;
-    background-image: url(https://keepcoding.io/wp-content/uploads/2021/12/Home-cabecera-min-1.jpg);
-    background-position: center center;
+    background-image: url(../assets/background.jpg);
     background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    color: white;
+    color: rgb(96, 96, 96);
     text-align: center;
-    font-family: Roboto, sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
 }
 
 section {
     padding: 32px;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 6px 20px rgba(130, 130, 130, 0.23);
     border-radius: 12px;
-    max-width: 600px;
+    width: 1000px;
     margin: auto;
 }
 
@@ -26,7 +29,6 @@ h1 {
     font-weight: 900;
     margin: 16px auto 24px auto;
     text-align: center;
-    text-transform: uppercase;
 }
 
 h2 {
@@ -42,7 +44,7 @@ p {
 
 button {
     width: 300px;
-    margin: 12px auto;
+    margin: 16px auto;
     display: inline-block;
     outline: 0;
     cursor: pointer;
@@ -50,20 +52,15 @@ button {
     padding: 0 56px;
     height: 45px;
     line-height: 45px;
-    background-color: #0070f3;
+    background-color: #ababab;
     color: white;
-    font-weight: 400;
+    font-weight: 700;
     font-size: 16px;
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        box-shadow 0.2s ease;
-    background-image: linear-gradient(120deg, #f0a11c 32%, #d55f1c 100%);
     border-radius: 26px 26px 26px 26px;
-    :hover {
-        background: rgba(0, 118, 255, 0.9);
-        box-shadow: 0 6px 20px rgb(0 118 255 / 23%);
-    }
+}
+
+button:hover {
+    background-color: #65ab46;
 }
 
 input {
@@ -76,4 +73,24 @@ input {
     font-weight: 800;
     font-size: 32px;
     width: 300px;
+    text-align: center;
+}
+
+.hello {
+    border-radius: 10px;
+    border: 1px solid #b7b7b7 !important;
+}
+
+span {
+    color: #65ab46;
+}
+
+div.numbers {
+    display: flex;
+    justify-content: center;
+    flex-direction: row!important;
+}
+
+div.hello {
+    margin: 8px !important;
 }
