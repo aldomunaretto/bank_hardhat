@@ -17,14 +17,14 @@ contract Bank {
         admin = tx.origin;
     }
 
-    // Eventos para depósitos y retiros
     event Deposited(address indexed depositor, uint256 amount);
     event Withdrawn(address indexed withdrawal, uint256 amount);
+    event InterestPaid(address indexed user, uint256 amount);
 
 
     function getMyBalance() public view returns (uint256) {
-        // calculateInterest();
-        return balances[msg.sender];
+        uint256 interest = estimateInterest(msg.sender);
+        return balances[msg.sender] + interest;
     }
 
     function getUserBalance(address user) public view returns (uint256) {
@@ -37,26 +37,37 @@ contract Bank {
         if(interests[msg.sender].lastInterestTime == 0) {
             interests[msg.sender].lastInterestTime = block.timestamp;
         } else {
-            calculateInterest();
+            calculateInterest(msg.sender);
         }
         balances[msg.sender] += msg.value;
         emit Deposited(msg.sender, msg.value);
     }
 
     function withdraw(uint256 amount) public {
-        calculateInterest();
+        calculateInterest(msg.sender);
         require(balances[msg.sender] >= amount, "INSUFFICIENT_BALANCE");
         payable(msg.sender).transfer(amount);
         balances[msg.sender] -= amount;
         emit Withdrawn(msg.sender, amount);
     }
 
-    function calculateInterest() internal {
-        uint256 timeElapsed = block.timestamp - interests[msg.sender].lastInterestTime;
-        uint256 interest = balances[msg.sender] * (annualInterestRate / 100) * (timeElapsed / 60*60*24*365 days);
-        balances[msg.sender] += interest;
-        interests[msg.sender].interestGiven += interest;
-        interests[msg.sender].lastInterestTime = block.timestamp;
+    function calculateInterest(address user) internal {
+        uint256 interest = estimateInterest(user);
+        balances[user] += interest;
+        interests[user].interestGiven += interest;
+        interests[user].lastInterestTime = block.timestamp;
+        emit InterestPaid(user, interest);
+    }
+
+    function estimateInterest(address user) internal view returns (uint256) {
+        uint256 timeElapsed = block.timestamp - interests[user].lastInterestTime;
+        uint256 interest = balances[user] * annualInterestRate / 100 * timeElapsed / 365 days;
+        return interest;
+    }
+
+    function getMyInterest() public view returns (uint256) {
+        uint256 interest = estimateInterest(msg.sender);
+        return interests[msg.sender].interestGiven + interest;
     }
 
     function getUserInterest(address user) public view returns (uint256) {
@@ -69,12 +80,10 @@ contract Bank {
         return interests[user].lastInterestTime;
     }
 
-    // Almacenaremos una variable que indique el porcentaje de interés que el banco aplica, y que podrá ser modificada por el owner del despliegue.
-    function getannualInterestRate() public view returns (uint256) {
+     function getannualInterestRate() public view returns (uint256) {
         return annualInterestRate;
     }
 
-    // Crear una función que permita modificar la tasa de interes
     function setannualInterestRate(uint256 rate) public {
         require(msg.sender == admin, "UNAUTHORIZED");
         annualInterestRate = rate;
