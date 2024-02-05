@@ -44,7 +44,6 @@ contract Bank {
     }
 
     function getUserBalance(address user) public view onlyAdmin returns (uint256) {
-        // require(msg.sender == admin, "UNAUTHORIZED");
         return balances[user];
     }
 
@@ -87,12 +86,10 @@ contract Bank {
     }
 
     function getUserInterest(address user) public view onlyAdmin returns (uint256) {
-        // require(msg.sender == admin, "UNAUTHORIZED");
         return interests[user].interestGiven;
     }
 
     function getUserLastInterestPaid(address user) public view onlyAdmin returns (uint256) {
-        // require(msg.sender == admin, "UNAUTHORIZED");
         return interests[user].lastInterestTime;
     }
 
@@ -101,7 +98,6 @@ contract Bank {
     }
 
     function setannualInterestRate(uint256 rate) public onlyAdmin {
-        // require(msg.sender == admin, "UNAUTHORIZED");
         annualInterestRate = rate;
     }
 
