@@ -222,4 +222,10 @@ describe("Nuestro Banco", function () {
             .to.be.revertedWith("UNAUTHORIZED");
     });
 
+    it("Annual interest rate cannot be zero", async function () {
+
+        await expect(this.bank.connect(this.owner).setannualInterestRate(0))
+            .to.be.revertedWith("INVALID_RATE");
+    });
+
 });
