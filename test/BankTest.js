@@ -177,10 +177,11 @@ describe("Nuestro Banco", function () {
     it("Get My Interest works correctly", async function () {
 
         await this.bank.connect(this.account1).deposit({ value: ethers.parseEther("1") });
-    
-        await new Promise(resolve => setTimeout(resolve, 1000));
-    
-        await this.bank.connect(this.account1).deposit({ value: ethers.parseEther("1") });
+
+        await network.provider.request({
+        method: "evm_mine",
+        params: [], 
+        });
     
         let interest = await this.bank.connect(this.account1).getMyInterest();
         assert(interest > 1585489500, "Interest is not calculated correctly");
