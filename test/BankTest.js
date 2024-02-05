@@ -23,6 +23,80 @@ describe("Nuestro Banco", function () {
         assert.isTrue(this.bank !== undefined);
     });
 
+    it("Owner can add more admins", async function () {
+
+        await this.bank.connect(this.owner).addAdmin(this.account1);
+
+        let isAdmin = await this.bank.admins(this.account1);
+        assert.equal(isAdmin, true, "Admin was not added correctly");
+
+    });
+
+    it("Admins can add more admins", async function () {
+
+        await this.bank.connect(this.owner).addAdmin(this.account1);
+
+        let isAdmin1 = await this.bank.admins(this.account1);
+        assert.equal(isAdmin1, true, "Admin was not added correctly");
+
+        await this.bank.connect(this.account1).addAdmin(this.account2);
+
+        let isAdmin2 = await this.bank.admins(this.account2);
+        assert.equal(isAdmin2, true, "Admin was not added correctly");
+    });
+
+    it("Non-admins cannot add more admins", async function () { 
+
+        await expect(this.bank.connect(this.account1).addAdmin(this.account2))
+            .to.be.revertedWith("UNAUTHORIZED");
+    });
+
+    it("Admins can remove other admins", async function () {
+
+        await this.bank.connect(this.owner).addAdmin(this.account1);
+
+        let isAdmin1 = await this.bank.admins(this.account1);
+        assert.equal(isAdmin1, true, "Admin was not added correctly");
+
+        await this.bank.connect(this.owner).addAdmin(this.account2);
+
+        let isAdmin2 = await this.bank.admins(this.account2);
+        assert.equal(isAdmin2, true, "Admin was not added correctly");
+
+        await this.bank.connect(this.account1).removeAdmin(this.account2);
+
+        let stillAdmin = await this.bank.admins(this.account2);
+        assert.equal(stillAdmin, false, "Admin was removed correctly");
+    });
+
+    it("Admins cannot remove owner", async function () { 
+
+        await this.bank.connect(this.owner).addAdmin(this.account1);
+
+        let isAdmin1 = await this.bank.admins(this.account1);
+        assert.equal(isAdmin1, true, "Admin was not added correctly");
+
+        await expect(this.bank.connect(this.account1).removeAdmin(this.owner))
+            .to.be.revertedWith("CANNOT_REMOVE_OWNER");
+    });
+
+    it("Admins cannot remove themselves", async function () { 
+
+        await this.bank.connect(this.owner).addAdmin(this.account1);
+
+        let isAdmin1 = await this.bank.admins(this.account1);
+        assert.equal(isAdmin1, true, "Admin was not added correctly");
+
+        await expect(this.bank.connect(this.account1).removeAdmin(this.account1))
+            .to.be.revertedWith("CANNOT_REMOVE_SELF");
+    });
+
+    it("Non-admins cannot remove admins", async function () { 
+
+        await expect(this.bank.connect(this.account1).removeAdmin(this.account2))
+            .to.be.revertedWith("UNAUTHORIZED");
+    });
+
     it("Get My Balance works ok", async function () {
 
         let myBalance1 = await this.bank.connect(this.owner).getMyBalance();

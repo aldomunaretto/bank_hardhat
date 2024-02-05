@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Bank {
-    address admin;
+    address owner;
     uint256 private annualInterestRate = 5; // 5% interest
 
     struct Interest {
@@ -12,23 +12,39 @@ contract Bank {
 
     mapping(address => uint256) private balances;
     mapping(address => Interest) private interests;
+    mapping(address => bool) public admins;
 
     constructor() {
-        admin = tx.origin;
+        owner = tx.origin;
+        admins[tx.origin] = true;
     }
 
     event Deposited(address indexed depositor, uint256 amount);
     event Withdrawn(address indexed withdrawal, uint256 amount);
     event InterestPaid(address indexed user, uint256 amount);
 
+    modifier onlyAdmin {
+        require(admins[msg.sender], "UNAUTHORIZED");
+        _;
+    }
+
+    function addAdmin(address user) public onlyAdmin {
+        admins[user] = true;
+    }
+
+    function removeAdmin(address user) public onlyAdmin {
+        require(msg.sender != user, "CANNOT_REMOVE_SELF");
+        require(owner != user, "CANNOT_REMOVE_OWNER");
+        admins[user] = false;
+    }
 
     function getMyBalance() public view returns (uint256) {
         uint256 interest = estimateInterest(msg.sender);
         return balances[msg.sender] + interest;
     }
 
-    function getUserBalance(address user) public view returns (uint256) {
-        require(msg.sender == admin, "UNAUTHORIZED");
+    function getUserBalance(address user) public view onlyAdmin returns (uint256) {
+        // require(msg.sender == admin, "UNAUTHORIZED");
         return balances[user];
     }
 
@@ -70,13 +86,13 @@ contract Bank {
         return interests[msg.sender].interestGiven + interest;
     }
 
-    function getUserInterest(address user) public view returns (uint256) {
-        require(msg.sender == admin, "UNAUTHORIZED");
+    function getUserInterest(address user) public view onlyAdmin returns (uint256) {
+        // require(msg.sender == admin, "UNAUTHORIZED");
         return interests[user].interestGiven;
     }
 
-    function getUserLastInterestPaid(address user) public view returns (uint256) {
-        require(msg.sender == admin, "UNAUTHORIZED");
+    function getUserLastInterestPaid(address user) public view onlyAdmin returns (uint256) {
+        // require(msg.sender == admin, "UNAUTHORIZED");
         return interests[user].lastInterestTime;
     }
 
@@ -84,8 +100,8 @@ contract Bank {
         return annualInterestRate;
     }
 
-    function setannualInterestRate(uint256 rate) public {
-        require(msg.sender == admin, "UNAUTHORIZED");
+    function setannualInterestRate(uint256 rate) public onlyAdmin {
+        // require(msg.sender == admin, "UNAUTHORIZED");
         annualInterestRate = rate;
     }
 
