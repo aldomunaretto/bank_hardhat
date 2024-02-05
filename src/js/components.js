@@ -7,6 +7,8 @@ function Actions(props) {
 
     const [depositVal, setDepositVal] = React.useState("0");
     const [withdrawVal, setWithdrawVal] = React.useState("0");
+    const [annualInterestRateVal, setannualInterestRateVal] = React.useState("0");
+    // const adminAddress = props.wallet//"0x5FbDB2315678afecb367f032d93Fe"; // debo traer este valor del SC
 
     async function deposit(e) {
 
@@ -45,6 +47,23 @@ function Actions(props) {
         }
     }
 
+    async function setannualInterestRate(e) {
+
+        e.preventDefault();
+
+        const wallet = props.wallet;
+
+        console.log("Setting new annual interest rate: " + annualInterestRateVal + "%");
+
+        await BANK.methods.setannualInterestRate(annualInterestRateVal).send({
+            from: wallet
+        });
+
+        if (props.refresh) {
+            props.refresh(wallet);
+        }
+    }
+
     const actionsStyle = {
         "marginTop": "16px",
         "display": "flex",
@@ -65,20 +84,28 @@ function Actions(props) {
     return (
         <div className="numbers" style={actionsStyle}>
 
-            <div className="hello" style={actionStyle}>
+            <div className="bank" style={actionStyle}>
                 <h2><span>Deposit</span> Process</h2>
                 <input id="number" type="number" name="depositVal" value={depositVal}
                     onChange={e => setDepositVal(e.target.value)} />
                 <button onClick={deposit}> Deposit </button>
             </div>
 
-            <div className="hello" style={actionStyle}>
+            <div className="bank" style={actionStyle}>
                 <h2><span>Withdraw</span> Process</h2>
                 <input type="number" name="withdrawVal" value={withdrawVal}
                     onChange={e => setWithdrawVal(e.target.value)} />
                 <button onClick={withdraw}> Withdraw </button>
             </div>
 
+            { window.ethereum.selectedAddress === props.wallet /*adminAddress*/ && (
+                <div className="bank" style={actionStyle}>
+                    <h2><span>Set </span> Annual Interest Rate</h2>
+                    <input type="number" name="annualInterestRateVal" value={annualInterestRateVal}
+                        onChange={e => setannualInterestRateVal(e.target.value)} />
+                    <button onClick={setannualInterestRate}> Update Annual Interest Rate </button>
+                </div>
+            )}
         </div>
     );
 }

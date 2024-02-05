@@ -76,7 +76,7 @@ input {
     text-align: center;
 }
 
-.hello {
+.bank {
     border-radius: 10px;
     border: 1px solid #b7b7b7 !important;
 }
@@ -91,6 +91,6 @@ div.numbers {
     flex-direction: row!important;
 }
 
-div.hello {
+div.bank {
     margin: 8px !important;
 }
