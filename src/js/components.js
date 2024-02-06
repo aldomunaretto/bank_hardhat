@@ -8,7 +8,8 @@ function Actions(props) {
     const [depositVal, setDepositVal] = React.useState("0");
     const [withdrawVal, setWithdrawVal] = React.useState("0");
     const [annualInterestRateVal, setannualInterestRateVal] = React.useState("0");
-    // const adminAddress = props.wallet//"0x5FbDB2315678afecb367f032d93Fe"; // debo traer este valor del SC
+    const [eventData, setEventData] = React.useState(null);
+    // const [isAdmin, setIsAdmin] = React.useState(false);
 
     async function deposit(e) {
 
@@ -44,6 +45,8 @@ function Actions(props) {
 
         if (props.refresh) {
             props.refresh(wallet);
+            setDepositVal("0");
+            setWithdrawVal("0");
         }
     }
 
@@ -63,6 +66,38 @@ function Actions(props) {
             props.refresh(wallet);
         }
     }
+
+    async function getAnnualInterestRate() {
+        const rate = await BANK.methods.getannualInterestRate().call();
+        setannualInterestRateVal(rate);
+    }
+    
+    React.useEffect(() => {
+        getAnnualInterestRate();
+    }, []);
+
+    React.useEffect(() => {
+        BANK.events.InterestPaid()
+          .on('data', (event) => {
+            console.log(event); // Log all data from the event
+            setEventData(event);
+          })
+          .on('error', console.error);
+      }, []);
+
+        // async function checkIsAdmin(e) {
+    
+    
+        //     const adminStatus = await BANK.methods.admins(window.ethereum.selectedAddress).call();
+        //     setIsAdmin(adminStatus);
+    
+        //     await BANK.methods.setannualInterestRate(annualInterestRateVal).send({
+        //         from: wallet
+        //     });
+    
+        //     if (props.refresh) {
+        //         props.refresh(wallet);
+        //     }
 
     const actionsStyle = {
         "marginTop": "16px",
@@ -98,15 +133,25 @@ function Actions(props) {
                 <button onClick={withdraw}> Withdraw </button>
             </div>
 
-            { window.ethereum.selectedAddress === props.wallet /*adminAddress*/ && (
+            {/* { window.ethereum.request({method: 'eth_accounts'})[0] === props.wallet && ( */}
                 <div className="bank" style={actionStyle}>
                     <h2><span>Set </span> Annual Interest Rate</h2>
                     <input type="number" name="annualInterestRateVal" value={annualInterestRateVal}
                         onChange={e => setannualInterestRateVal(e.target.value)} />
                     <button onClick={setannualInterestRate}> Update Annual Interest Rate </button>
                 </div>
-            )}
+            {/* )} */}
+
+            <div>
+      { eventData && (
+            <div className="bank" style={actionStyle}>
+                <h2><span>Event</span> Logs</h2>
+                <p>{eventData ? JSON.stringify(eventData) : "No events yet"}</p>
+            </div>
+                  )}
+                  </div>
         </div>
+        
     );
 }
 
@@ -132,7 +177,7 @@ function Main(props) {
         const bankBalanceVal = await BANK.methods.getMyBalance().call({ from: wallet });
         setBankBalance(web3.utils.fromWei(bankBalanceVal, 'ether'));
 
-        // Get Your bank balance
+        // Get Your interest estimation
 
         const interestReceivedVal = await BANK.methods.getMyInterest().call({ from: wallet });
         setinterestReceived(web3.utils.fromWei(interestReceivedVal, 'ether'));
@@ -164,6 +209,17 @@ function Main(props) {
         await refreshBalances(wallet);
     }
 
+    // Hook to refresh balances without updating the page.
+    React.useEffect(() => {
+        let interval;
+        if (wallet) {
+            refreshBalances(wallet);
+            interval = setInterval(() => refreshBalances(wallet), 10000);
+        }
+
+        return () => clearInterval(interval);
+    }, [wallet]);
+
     return (
         <div>
 
@@ -191,4 +247,5 @@ function Main(props) {
 
         </div>
     );
+
 }
